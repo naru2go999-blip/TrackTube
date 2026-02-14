@@ -1,11 +1,11 @@
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig = {
-  apiKey: "AIzaSyB42YdK2AtI3svUmgSokMt1qqk1I5V3IzE",
-  authDomain: "tracktube-b529c.firebaseapp.com",
-  projectId: "tracktube-b529c",
-  storageBucket: "tracktube-b529c.appspot.com",
-  messagingSenderId: "811200203714",
-  appId: "1:811200203714:web:3962815b6cfacb2360645b",
-  measurementId: "G-M4R8VY7YR9"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
