@@ -67,7 +67,7 @@ export function AppSidebar() {
             <div className="flex items-center gap-2 overflow-hidden">
               <User className="h-6 w-6 flex-shrink-0" />
               <span className={`whitespace-nowrap text-sm font-medium text-foreground truncate transition-opacity duration-300 ${ state === 'collapsed' ? 'opacity-0' : 'opacity-100' }`}>
-                {user.email}
+                {user.displayName || user.email}
               </span>
             </div>
             <SidebarMenuButton onClick={handleSignOut} tooltip={{ children: 'Sign Out' }}>

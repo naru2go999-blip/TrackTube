@@ -180,7 +180,7 @@ export default function DashboardPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8">
         <Alert>
-          <AlertTitle>Welcome back, {user.email}!</AlertTitle>
+          <AlertTitle>Welcome back, {user.displayName || user.email}!</AlertTitle>
           <AlertDescription>
             {isAdmin ? "You are an admin. You can add new playlists." : "Here's an overview of your YouTube playlist progress."}
           </AlertDescription>
