@@ -1,7 +1,9 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    allowedDevOrigins: ['https://9000-firebase-studio-1771058810600.cluster-bg6uurscprhn6qxr6xwtrhvkf6.cloudworkstations.dev'],
+  },
   images: {
     remotePatterns: [
       {
