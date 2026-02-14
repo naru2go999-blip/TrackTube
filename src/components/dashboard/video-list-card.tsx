@@ -18,17 +18,19 @@ type VideoListCardProps = {
   videos: Video[];
   watchedVideoIds: Set<string>;
   onToggleWatched: (videoId: string) => void;
+  playlistName: string;
 };
 
 export function VideoListCard({
   videos,
   watchedVideoIds,
   onToggleWatched,
+  playlistName,
 }: VideoListCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Playlist Content</CardTitle>
+        <CardTitle>{playlistName} Content</CardTitle>
         <CardDescription>
           Check the box next to videos you have watched.
         </CardDescription>
