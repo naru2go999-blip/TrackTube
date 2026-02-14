@@ -1,47 +1,58 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { mockPlaylist } from '@/lib/data';
-import type { Video } from '@/lib/types';
+import { useState, useMemo, useCallback } from 'react';
+import { mockPlaylists, allMockVideos } from '@/lib/data';
+import type { Video, Playlist } from '@/lib/types';
 import { PlaylistImportCard } from '@/components/dashboard/playlist-import-card';
-import { ProgressOverviewCard } from '@/components/dashboard/progress-overview-card';
-import { RecommendationCard } from '@/components/dashboard/recommendation-card';
-import { VideoListCard } from '@/components/dashboard/video-list-card';
+import { OverallProgressCard } from '@/components/dashboard/overall-progress-card';
+import { PlaylistCard } from '@/components/dashboard/playlist-card';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 
 export default function DashboardPage() {
-  const [playlist, setPlaylist] = useState<Video[]>(mockPlaylist);
-  const [playlistName, setPlaylistName] = useState<string>('Getting Started with React Hooks');
-  const [watchedVideoIds, setWatchedVideoIds] = useState<Set<string>>(new Set(['1', '3']));
+  const [playlists, setPlaylists] = useState<Playlist[]>(mockPlaylists);
+  
+  const [watchedVideoIds, setWatchedVideoIds] = useState<Record<string, Set<string>>>(() => {
+    // Initialize with some watched videos for the mock playlists
+    return {
+      'pl1': new Set(['1', '2']),
+      'pl2': new Set(['4', '5']),
+    };
+  });
   const { toast } = useToast();
 
-  const handleToggleWatched = (videoId: string) => {
+  const handleToggleWatched = useCallback((playlistId: string, videoId: string) => {
     setWatchedVideoIds(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(videoId)) {
-        newSet.delete(videoId);
-      } else {
-        newSet.add(videoId);
+      const newWatched = { ...prev };
+      if (!newWatched[playlistId]) {
+        newWatched[playlistId] = new Set();
       }
-      return newSet;
+      const playlistWatched = new Set(newWatched[playlistId]);
+      if (playlistWatched.has(videoId)) {
+        playlistWatched.delete(videoId);
+      } else {
+        playlistWatched.add(videoId);
+      }
+      newWatched[playlistId] = playlistWatched;
+      return newWatched;
     });
-  };
+  }, []);
 
   const handleImportPlaylist = (url: string, name: string) => {
-    // In a real app, you'd fetch the playlist from the URL.
-    // For this demo, we'll just reload the mock playlist if the URL is "correct".
     if (url.includes('youtube.com/playlist')) {
-      setPlaylist(mockPlaylist);
-      setPlaylistName(name);
-      // Reset progress for the "new" playlist
-      setWatchedVideoIds(new Set());
+        // Mock adding a new playlist
+        const newPlaylist: Playlist = {
+            id: `pl${playlists.length + 1}`,
+            name: name,
+            videos: allMockVideos.slice(6, 8) // just some mock videos for demo
+        }
+        setPlaylists(prev => [...prev, newPlaylist]);
+
       toast({
         title: 'Playlist Imported!',
         description: `The playlist "${name}" has been successfully loaded.`,
       });
-      if (url.includes('mock-playlist')) {
-        setWatchedVideoIds(new Set(['1', '3']));
-      }
     } else {
       toast({
         variant: 'destructive',
@@ -51,57 +62,42 @@ export default function DashboardPage() {
     }
   };
 
-  const { watchedVideos, unwatchedVideos } = useMemo(() => {
-    const watchedList: Omit<Video, 'id' | 'thumbnailUrl' | 'duration'>[] = [];
-    const unwatchedList: Omit<Video, 'id' | 'thumbnailUrl' | 'duration'>[] = [];
-    playlist.forEach(video => {
-      const plainVideo = {
-        videoId: video.videoId,
-        title: video.title,
-        description: video.description,
-      };
-      if (watchedVideoIds.has(video.id)) {
-        watchedList.push(plainVideo);
-      } else {
-        unwatchedList.push(plainVideo);
-      }
-    });
-    return { watchedVideos: watchedList, unwatchedVideos: unwatchedList };
-  }, [playlist, watchedVideoIds]);
-
-  const totalVideos = playlist.length;
-  const completedVideosCount = watchedVideoIds.size;
+  const { totalVideos, completedVideos } = useMemo(() => {
+    let total = 0;
+    let completed = 0;
+    playlists.forEach(p => {
+        total += p.videos.length;
+        const watched = watchedVideoIds[p.id] || new Set();
+        completed += watched.size;
+    })
+    return { totalVideos: total, completedVideos: completed };
+  }, [playlists, watchedVideoIds]);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
-       <header>
-          <h1 className="text-3xl font-bold tracking-tight">{playlistName}</h1>
-          <p className="text-muted-foreground">
-            Here's your playlist progress and AI-powered next step.
-          </p>
-        </header>
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 space-y-6">
-          <PlaylistImportCard onImport={handleImportPlaylist} />
-          <VideoListCard
-            videos={playlist}
-            watchedVideoIds={watchedVideoIds}
-            onToggleWatched={handleToggleWatched}
-            playlistName={playlistName}
-          />
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8">
+        <Alert>
+          <AlertDescription>
+            Storage mode: Local browser storage (add Firebase config to enable cloud sync).
+          </AlertDescription>
+        </Alert>
+
+        <OverallProgressCard totalVideos={totalVideos} completedVideos={completedVideos} />
+
+        <PlaylistImportCard onImport={handleImportPlaylist} />
+
+        <div>
+            <h2 className="text-2xl font-bold tracking-tight mb-4">Your Playlists</h2>
+            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+                {playlists.map(playlist => (
+                    <PlaylistCard 
+                        key={playlist.id}
+                        playlist={playlist}
+                        watchedVideoIds={watchedVideoIds[playlist.id] || new Set()}
+                        onToggleWatched={handleToggleWatched}
+                    />
+                ))}
+            </div>
         </div>
-        <div className="space-y-6">
-          <ProgressOverviewCard
-            completed={completedVideosCount}
-            total={totalVideos}
-          />
-          <RecommendationCard
-            watchedVideos={watchedVideos}
-            unwatchedVideos={unwatchedVideos}
-            playlist={playlist}
-          />
-        </div>
-      </div>
     </div>
   );
 }
