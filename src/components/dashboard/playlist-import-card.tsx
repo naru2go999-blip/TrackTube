@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -9,7 +12,19 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Link } from 'lucide-react';
 
-export function PlaylistImportCard() {
+type PlaylistImportCardProps = {
+  onImport: (url: string) => void;
+};
+
+export function PlaylistImportCard({ onImport }: PlaylistImportCardProps) {
+  const [url, setUrl] = useState('https://youtube.com/playlist?list=mock-playlist');
+
+  const handleImport = () => {
+    if (url) {
+      onImport(url);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -25,20 +40,16 @@ export function PlaylistImportCard() {
             <Input
               type="url"
               placeholder="https://youtube.com/playlist?list=..."
-              defaultValue="https://youtube.com/playlist?list=mock-playlist"
-              disabled
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
               className="pl-9"
             />
           </div>
 
-          <Button type="submit" disabled>
+          <Button type="submit" onClick={handleImport}>
             Import
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground mt-2">
-          Playlist import is disabled for this demo. A mock playlist has been
-          loaded for you.
-        </p>
       </CardContent>
     </Card>
   );

@@ -7,10 +7,12 @@ import { PlaylistImportCard } from '@/components/dashboard/playlist-import-card'
 import { ProgressOverviewCard } from '@/components/dashboard/progress-overview-card';
 import { RecommendationCard } from '@/components/dashboard/recommendation-card';
 import { VideoListCard } from '@/components/dashboard/video-list-card';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DashboardPage() {
   const [playlist, setPlaylist] = useState<Video[]>(mockPlaylist);
   const [watchedVideoIds, setWatchedVideoIds] = useState<Set<string>>(new Set(['1', '3']));
+  const { toast } = useToast();
 
   const handleToggleWatched = (videoId: string) => {
     setWatchedVideoIds(prev => {
@@ -24,9 +26,29 @@ export default function DashboardPage() {
     });
   };
 
+  const handleImportPlaylist = (url: string) => {
+    // In a real app, you'd fetch the playlist from the URL.
+    // For this demo, we'll just reload the mock playlist if the URL is "correct".
+    if (url.includes('mock-playlist')) {
+      setPlaylist(mockPlaylist);
+      // Reset progress for the "new" playlist
+      setWatchedVideoIds(new Set(['1', '3']));
+      toast({
+        title: 'Playlist Imported!',
+        description: 'The mock playlist has been successfully loaded.',
+      });
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Import Failed',
+        description: 'Only the mock playlist URL is supported in this demo.',
+      });
+    }
+  };
+
   const { watchedVideos, unwatchedVideos } = useMemo(() => {
-    const watched: Omit<Video, 'id' | 'thumbnailUrl' | 'duration'>[] = [];
-    const unwatched: Omit<Video, 'id' | 'thumbnailUrl' | 'duration'>[] = [];
+    const watchedList: Omit<Video, 'id' | 'thumbnailUrl' | 'duration'>[] = [];
+    const unwatchedList: Omit<Video, 'id' | 'thumbnailUrl' | 'duration'>[] = [];
     playlist.forEach(video => {
       const plainVideo = {
         videoId: video.videoId,
@@ -34,12 +56,12 @@ export default function DashboardPage() {
         description: video.description,
       };
       if (watchedVideoIds.has(video.id)) {
-        watched.push(plainVideo);
+        watchedList.push(plainVideo);
       } else {
-        unwatched.push(plainVideo);
+        unwatchedList.push(plainVideo);
       }
     });
-    return { watchedVideos: watched, unwatchedVideos: unwatched };
+    return { watchedVideos: watchedList, unwatchedVideos: unwatchedList };
   }, [playlist, watchedVideoIds]);
 
   const totalVideos = playlist.length;
@@ -55,7 +77,7 @@ export default function DashboardPage() {
         </header>
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 space-y-6">
-          <PlaylistImportCard />
+          <PlaylistImportCard onImport={handleImportPlaylist} />
           <VideoListCard
             videos={playlist}
             watchedVideoIds={watchedVideoIds}
