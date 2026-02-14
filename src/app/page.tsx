@@ -39,7 +39,7 @@ export default function DashboardPage() {
       }
       setWatchedVideoIds(newWatched);
     } else {
-      // Create a document for new user
+      // Create a document for new users
       await setDoc(userDocRef, { playlists: [], watchedVideoIds: {} });
     }
     setIsLoading(false);
