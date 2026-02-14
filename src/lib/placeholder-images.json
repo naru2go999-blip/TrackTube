@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "video-1-thumb",
+      "description": "Abstract code on a screen",
+      "imageUrl": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb2RlJTIwYWJzdHJhY3R8ZW58MHx8fHwxNzcxMDI0ODk1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "code abstract"
+    },
+    {
+      "id": "video-2-thumb",
+      "description": "React logo with particles",
+      "imageUrl": "https://picsum.photos/seed/v2/320/180",
+      "imageHint": "react logo"
+    },
+    {
+      "id": "video-3-thumb",
+      "description": "Figma design interface",
+      "imageUrl": "https://images.unsplash.com/photo-1657565474297-09483c01767b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkZXNpZ24lMjBmaWdtYXxlbnwwfHx8fDE3NzEwNTk4Mjl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "design figma"
+    },
+    {
+      "id": "video-4-thumb",
+      "description": "Next.js logo on a dark background",
+      "imageUrl": "https://picsum.photos/seed/v4/320/180",
+      "imageHint": "nextjs logo"
+    },
+    {
+      "id": "video-5-thumb",
+      "description": "A person giving a tech talk",
+      "imageUrl": "https://images.unsplash.com/photo-1758525223013-290ae3620f53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8dGVjaCUyMHRhbGt8ZW58MHx8fHwxNzcxMDU5ODMwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tech talk"
+    },
+    {
+      "id": "video-6-thumb",
+      "description": "A loading spinner animation",
+      "imageUrl": "https://images.unsplash.com/photo-1634224164883-35a211ace14b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxsb2FkaW5nJTIwYW5pbWF0aW9ufGVufDB8fHx8MTc3MTA1OTgzMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "loading animation"
+    },
+    {
+      "id": "video-7-thumb",
+      "description": "A chart showing web performance metrics",
+      "imageUrl": "https://images.unsplash.com/photo-1763568258586-da55ea292766?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwZXJmb3JtYW5jZSUyMGNoYXJ0fGVufDB8fHx8MTc3MTA1OTgzMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "performance chart"
+    },
+    {
+      "id": "video-8-thumb",
+      "description": "Code editor with Tailwind CSS classes",
+      "imageUrl": "https://images.unsplash.com/photo-1731924009776-2f486f3a2c1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0YWlsd2luZCUyMGNzc3xlbnwwfHx8fDE3NzEwNTk4MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tailwind css"
+    }
+  ]
 }
