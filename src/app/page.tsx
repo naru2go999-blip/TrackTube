@@ -52,14 +52,15 @@ export default function DashboardPage() {
         toast({
             variant: 'default',
             title: 'Playlist Already Exists',
-            description: `The playlist "${name}" is already in your dashboard.`,
+            description: `The playlist is already in your dashboard.`,
         });
         return;
     }
 
     setIsLoading(true);
     try {
-      const videos = await getPlaylistVideos(playlistId);
+      const playlistData = await getPlaylistVideos(playlistId);
+      const videos = playlistData.videos;
       
       if (!videos || videos.length === 0) {
         toast({
@@ -70,9 +71,11 @@ export default function DashboardPage() {
         return;
       }
 
+      const playlistName = name || playlistData.playlistTitle;
+
       const newPlaylist: Playlist = {
         id: playlistId,
-        name: name,
+        name: playlistName,
         videos: videos
       };
 
@@ -80,7 +83,7 @@ export default function DashboardPage() {
 
       toast({
         title: 'Playlist Imported!',
-        description: `The playlist "${name}" has been successfully loaded.`,
+        description: `The playlist "${playlistName}" has been successfully loaded.`,
       });
 
     } catch (error: any) {

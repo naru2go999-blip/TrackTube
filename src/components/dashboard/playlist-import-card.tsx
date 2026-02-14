@@ -22,7 +22,7 @@ export function PlaylistImportCard({ onImport, isLoading }: PlaylistImportCardPr
   const [name, setName] = useState('');
 
   const handleImport = () => {
-    if (url && name && !isLoading) {
+    if (url && !isLoading) {
       onImport(url, name);
     }
   };
@@ -35,7 +35,7 @@ export function PlaylistImportCard({ onImport, isLoading }: PlaylistImportCardPr
       <CardContent>
         <div className="grid md:grid-cols-3 gap-4 items-end">
           <div className="md:col-span-1 space-y-2">
-            <Label htmlFor="playlist-name">Playlist Name</Label>
+            <Label htmlFor="playlist-name">Playlist Name (Optional)</Label>
             <Input
               id="playlist-name"
               type="text"
@@ -56,7 +56,7 @@ export function PlaylistImportCard({ onImport, isLoading }: PlaylistImportCardPr
               disabled={isLoading}
             />
           </div>
-          <Button type="button" onClick={handleImport} className="w-full md:w-auto" disabled={isLoading || !url || !name}>
+          <Button type="button" onClick={handleImport} className="w-full md:w-auto" disabled={isLoading || !url}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

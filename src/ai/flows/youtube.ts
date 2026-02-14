@@ -2,7 +2,7 @@
 /**
  * @fileOverview A flow for interacting with the YouTube API.
  *
- * - getPlaylistVideos - Fetches all videos from a given YouTube playlist ID.
+ * - getPlaylistVideos - Fetches all videos and the title from a given YouTube playlist ID.
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
@@ -32,11 +32,22 @@ const YoutubeApiResponseSchema = z.object({
   nextPageToken: z.string().optional(),
 });
 
-const getPlaylistVideosFlow = ai.defineFlow(
-  {
-    name: 'getPlaylistVideosFlow',
-    inputSchema: z.string(), // playlistId
-    outputSchema: z.array(
+// This is a subset of the YouTube API playlist details.
+// See: https://developers.google.com/youtube/v3/docs/playlists#resource
+const YoutubePlaylistDetailsItemSchema = z.object({
+  snippet: z.object({
+    title: z.string(),
+  }),
+});
+
+const YoutubePlaylistDetailsResponseSchema = z.object({
+  items: z.array(YoutubePlaylistDetailsItemSchema),
+});
+
+
+const PlaylistOutputSchema = z.object({
+    playlistTitle: z.string(),
+    videos: z.array(
       z.object({
         id: z.string(),
         videoId: z.string(),
@@ -46,6 +57,13 @@ const getPlaylistVideosFlow = ai.defineFlow(
         duration: z.string(),
       })
     ),
+  });
+
+const getPlaylistVideosFlow = ai.defineFlow(
+  {
+    name: 'getPlaylistVideosFlow',
+    inputSchema: z.string(), // playlistId
+    outputSchema: PlaylistOutputSchema,
   },
   async (playlistId) => {
     const apiKey = process.env.YOUTUBE_API_KEY;
@@ -53,10 +71,38 @@ const getPlaylistVideosFlow = ai.defineFlow(
       throw new Error('YOUTUBE_API_KEY environment variable is not set.');
     }
 
-    let allVideos: Video[] = [];
-    let nextPageToken: string | undefined = undefined;
-
     try {
+      // 1. Fetch Playlist Title
+      const playlistDetailsParams = new URLSearchParams({
+        part: 'snippet',
+        id: playlistId,
+        key: apiKey,
+      });
+      const playlistDetailsResponse = await fetch(
+        `https://www.googleapis.com/youtube/v3/playlists?${playlistDetailsParams.toString()}`
+      );
+
+      if (!playlistDetailsResponse.ok) {
+        const errorData = await playlistDetailsResponse.json();
+        throw new Error(`YouTube API error (playlists): ${errorData.error.message}`);
+      }
+
+      const playlistDetailsData = await playlistDetailsResponse.json();
+      const parsedPlaylistDetails =
+        YoutubePlaylistDetailsResponseSchema.parse(playlistDetailsData);
+
+      const playlistTitle = parsedPlaylistDetails.items[0]?.snippet.title;
+
+      if (!playlistTitle) {
+        throw new Error(
+          'Could not retrieve playlist title. The playlist might be private or deleted.'
+        );
+      }
+      
+      // 2. Fetch Videos
+      let allVideos: Video[] = [];
+      let nextPageToken: string | undefined = undefined;
+
       do {
         const params = new URLSearchParams({
           part: 'snippet,contentDetails',
@@ -99,7 +145,7 @@ const getPlaylistVideosFlow = ai.defineFlow(
         nextPageToken = parsedData.nextPageToken;
       } while (nextPageToken);
 
-      return allVideos;
+      return { playlistTitle, videos: allVideos };
     } catch (error) {
       console.error('Failed to fetch playlist videos:', error);
       if (error instanceof Error) {
@@ -112,6 +158,6 @@ const getPlaylistVideosFlow = ai.defineFlow(
   }
 );
 
-export async function getPlaylistVideos(playlistId: string): Promise<Video[]> {
+export async function getPlaylistVideos(playlistId: string): Promise<{ playlistTitle: string, videos: Video[] }> {
   return getPlaylistVideosFlow(playlistId);
 }
