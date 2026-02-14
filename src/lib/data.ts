@@ -82,15 +82,4 @@ export const allMockVideos = [
 ];
 
 
-export const mockPlaylists: Playlist[] = [
-  {
-    id: 'pl1',
-    name: 'Control Systems Engineering',
-    videos: allMockVideos.slice(0, 3),
-  },
-  {
-    id: 'pl2',
-    name: 'Machine Learning Fundamentals',
-    videos: allMockVideos.slice(3, 6),
-  },
-];
+export const mockPlaylists: Playlist[] = [];
